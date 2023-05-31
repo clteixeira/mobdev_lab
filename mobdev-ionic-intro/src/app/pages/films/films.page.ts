@@ -1,28 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
-selector: 'app-films',
-templateUrl: './films.page.html',
-styleUrls: ['./films.page.scss'],   
+	selector: 'app-films',
+	templateUrl: './films.page.html',
+	styleUrls: ['./films.page.scss'],
 })
+
 export class FilmsPage implements OnInit {
-
-constructor(private navController: NavController, private router: Router) { }
-
-	ngOnInit() {  
-	}
-
-openDetails() {
-// Both of these would work!
-// But the standard Router is recommended.
-// this.navController.navigateForward(`/tabs/films/42`);
-this.router.navigateByUrl(`/tabs/films/42`);  
+	films: Observable<any> | undefined;
+	constructor(private router: Router, private http: HttpClient) { }
+	
+	ngOnInit() {
+		this.films = this.http.get('https://swapi.dev/api/films');
+	  }
+	  
+	  showFilm(film: { url: string; }){
+		let split = film.url.split('/');
+		let filmId = split[split.length-2];
+		this.router.navigateByUrl(`/tabs/films/${filmId}`);
+	  }
 }
 
-goToPlanets() {
-this.navController.navigateRoot(`/tabs/planets`) 
-	}
 
-}
